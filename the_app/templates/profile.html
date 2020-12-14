@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">    
+    <title>Profile</title>
+</head>
+
+<body>
+    <div id='wrap'>
+    <h1>Hello {{user.first_name}} {{user.last_name}}</h1>
+    <a href="/success" class="btn btn-secondary">Go Back</a>
+    <div id='posts'>
+    <div id='write'>
+        <a class="btn btn-danger" href="/logout">Logout</a>
+    </div>
+    <div class='one_post'>
+        <h2>Wall Post:</h2>
+        {% for post in user.wall_messages.all %}
+        <div id='posts'>
+            <p>{{post.message}}</p>
+            <p class='poster'>Posted By: {{post.poster.first_name}} {{post.poster.last_name}} {{post.created_at}}</a></p>
+            <a class='poster' href="/deletepost/{{post.id}}">Delete Post</a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class='one_post'>
+        <h2>Comments:</h2>
+        {% for comment in user.wall_comments.all %}
+        <div id='posts'>
+            <p>{{comment.comment}}</p>
+            <p class='poster'>Posted by: {{comment.poster.first_name}} {{comment.poster.last_name}} {{comment.created_at}}</p>
+            <a class='poster' href="/delete/{{comment.id}}">Delete Comment</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h1>Edit User Profile</h1>
+    <div class='one_post'>
+        <div class="form-box">
+        <form action="/edit/{{user.id}}" method=POST>
+            {% csrf_token %}
+            <label>First Name:</label><input type="text" name='fname' value={{user.first_name}}>
+            <label>Last Name:</label><input type="text" name='lname' value={{user.last_name}}>
+            <label>Email:</label><input type="text" name='email' value={{user.email}}>
+            <label>Age:</label><input type="number" name='age' value={{user.age}}>
+            <label>Birthday: </label><input type="text" name='birth_date' value={{user.birth_date}}>
+            <input type="submit">
+        </form>
+        </div>
+    </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">    
+    <title>Success</title>
+</head>
+<body>
+    <div id='wrap'>
+        <h1>Welcome to {{request.session.user}}'s Wall!</h1>
+        <a class="btn btn-primary" href="/profile/{{user.id}}">User Profile</a>
+        <div id='write'>
+            <a class="btn btn-danger" href="/logout">Logout</a>
+        </div>
+        <div class='one_post'>
+        <h2>Write a Post:</h2>
+        <form action="/process_message" method=POST>
+            {% csrf_token %}
+            <textarea type="text" name='mess' cols="80" rows="5" placeholder="My Wall Post"></textarea>
+            <br></br>
+            <input class="btn btn-primary" type="submit" value="Wall Post"></input>
+        </form>
+        </div>
+        <h1>My Wall</h1>
+        <div id='posts'>
+        {% if wall_messages %}
+            {% for post in wall_messages reversed %}
+            <div class='border border-info'>
+            <div class='one_post'>
+                <p class='post'>{{post.message}}</p>
+                <p class='poster'>Posted By: {{post.poster.first_name}} {{post.poster.last_name}} {{post.created_at}}</a></p>
+                <a href="/like/{{post.id}}">Like Post</a><p>{{ post.user_likes.count }}</p>
+            </div>
+                {% if post.post_comments %}
+                <div id='posts'>
+                    {% for comment in post.post_comments.all reversed %}
+                    <div class='one_post'>
+                    <h3>Comment:</h3>
+                        <p>{{comment.comment}}</p>
+                        <p class='poster'>Posted by: {{comment.poster.first_name}} {{comment.poster.last_name}} {{comment.created_at}}</p>
+                        <a class='poster' href="/delete/{{comment.id}}">Delete Comment</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class='one_post'>
+                    <h4>Comment to My Wall Post:</h4>
+                    <form action="/add_comment/{{post.id}}" method=POST>
+                        {% csrf_token %}
+                        <textarea type="text" name='comment' cols="60" rows="2" placeholder="Comment"></textarea>
+                        <input class="btn btn-warning" type="submit" value='Comment'></input>
+                    </form>
+                </div>
+            </div>    
+            {% endfor %}
+                </div>
+        {% endif %}
+        </div>
+    </div>
+    </body>
+</body>
+</html>
